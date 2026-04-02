@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qreative — Calligraphy Text Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@400;700&family=Pacifico&family=Allura&family=Sacramento&family=Satisfy&family=Parisienne&family=Alex+Brush&family=Courgette&family=Kaushan+Script&family=Pinyon+Script&family=Ruthie&family=Ms+Madi&family=Lavishly+Yours&family=Engagement&family=Herr+Von+Muellerhoff&family=Mr+De+Havilland&family=Italianno&family=Qwitcher+Grypen&family=Monsieur+La+Doulaise&family=Style+Script&family=Waterfall&family=Clicker+Script&family=Lovers+Quarrel&family=Euphoria+Script&family=Imperial+Script&family=Meie+Script&family=Stalemate&family=Corinthia&family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #0b0908;
+      --bg2:      #110e0c;
+      --surface:  #1e1a15;
+      --surface2: #252019;
+      --border:   #342d24;
+      --border2:  #433a2e;
+      --gold:     #c8a44a;
+      --gold2:    #e6c55e;
+      --ink:      #eee5d2;
+      --ink2:     #c5b89e;
+      --ink3:     #867560;
+      --green:    #4aaa78;
+      --red:      #c84a4a;
+      --radius:   18px;
+      --rsm:      11px;
+      --shadow:   0 8px 40px rgba(0,0,0,.6);
+      --glow:     0 0 30px rgba(200,164,74,.18);
+      --tr:       0.22s cubic-bezier(.4,0,.2,1);
+    }
+    [data-theme="light"] {
+      --bg:       #f4ede0;
+      --bg2:      #ede4d4;
+      --surface:  #faf4ea;
+      --surface2: #f0e8d6;
+      --border:   #d4c8b2;
+      --border2:  #c2b49c;
+      --gold:     #9a6d1c;
+      --gold2:    #b5840a;
+      --ink:      #281e12;
+      --ink2:     #4e4030;
+      --ink3:     #867560;
+      --shadow:   0 8px 32px rgba(0,0,0,.13);
+      --glow:     0 0 30px rgba(154,109,28,.14);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Cinzel',serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;transition:background var(--tr),color var(--tr)}
+    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
+
+    /* HEADER */
+    header{position:sticky;top:0;z-index:200;background:rgba(11,9,8,.84);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 clamp(14px,4vw,52px)}
+    [data-theme="light"] header{background:rgba(244,237,224,.86)}
+    .hdr{max-width:1500px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:62px;gap:14px}
+    .logo{display:flex;align-items:baseline;gap:5px;text-decoration:none;line-height:1}
+    .logo-q{font-family:'Great Vibes',cursive;font-size:2.2rem;color:var(--gold2);text-shadow:0 0 22px rgba(230,197,94,.28)}
+    .logo-rest{font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.22em;color:var(--ink2);text-transform:uppercase;padding-bottom:3px}
+    .logo-dot{color:var(--gold);margin:0 2px}
+    .logo-sub{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.26em;color:var(--ink3);text-transform:uppercase;padding-bottom:3px}
+    .hdr-r{display:flex;align-items:center;gap:9px}
+    .hdr-ico{font-size:.76rem;color:var(--ink3)}
+    .theme-btn{width:46px;height:24px;background:var(--surface2);border:1px solid var(--border2);border-radius:999px;cursor:pointer;position:relative;transition:background var(--tr);flex-shrink:0}
+    .theme-btn::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--gold);border-radius:50%;transition:transform var(--tr)}
+    [data-theme="light"] .theme-btn::after{transform:translateX(22px)}
+
+    /* HERO */
+    .hero{position:relative;z-index:1;padding:clamp(28px,5vw,70px) clamp(14px,4vw,52px) clamp(18px,3vw,38px);max-width:1500px;margin:0 auto}
+    .eyebrow{font-size:.59rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+    .eyebrow::after{content:'';flex:1;max-width:100px;height:1px;background:linear-gradient(to right,var(--gold),transparent)}
+    .ishell{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:border-color var(--tr),box-shadow var(--tr);display:flex;align-items:center}
+    .ishell:focus-within{border-color:var(--gold);box-shadow:var(--glow)}
+    .inib{padding:0 clamp(12px,2vw,22px);font-size:1.4rem;color:var(--gold);opacity:.6;pointer-events:none;flex-shrink:0}
+    #tIn{flex:1;background:transparent;border:none;outline:none;color:var(--ink);caret-color:var(--gold2);font-family:'Dancing Script',cursive;font-size:clamp(1.6rem,3.6vw,2.8rem);padding:clamp(13px,2vw,24px) 0;line-height:1.3}
+    #tIn::placeholder{color:var(--ink3);font-style:italic}
+    #cCount{font-size:.58rem;letter-spacing:.1em;color:var(--ink3);padding:0 12px;flex-shrink:0;white-space:nowrap}
+    #clrBtn{width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);color:var(--ink3);font-size:.72rem;cursor:pointer;display:none;align-items:center;justify-content:center;margin-right:12px;transition:all var(--tr);flex-shrink:0}
+    #clrBtn.vis{display:flex}
+    #clrBtn:hover{background:var(--border);color:var(--ink)}
+
+    /* CONTROLS */
+    .ctrls{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:15px}
+    .sw{position:relative;flex:1;min-width:155px;max-width:270px}
+    .sw svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.36}
+    #sIn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);color:var(--ink);font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.06em;padding:9px 12px 9px 33px;outline:none;transition:border-color var(--tr)}
+    #sIn:focus{border-color:var(--gold)}
+    #sIn::placeholder{color:var(--ink3)}
+    .szw{display:flex;align-items:center;gap:8px}
+    .szl{font-size:.59rem;letter-spacing:.14em;color:var(--ink3);white-space:nowrap}
+    .szv{font-size:.59rem;color:var(--gold);letter-spacing:.07em;min-width:24px}
+    #szR{-webkit-appearance:none;appearance:none;width:88px;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
+    #szR::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--gold);cursor:pointer}
+    .fbrow{display:flex;gap:5px;flex-wrap:wrap}
+    .fb{font-family:'Cinzel',serif;font-size:.57rem;letter-spacing:.13em;text-transform:uppercase;padding:7px 12px;border-radius:999px;border:1px solid var(--border2);background:transparent;color:var(--ink3);cursor:pointer;transition:all var(--tr);white-space:nowrap}
+    .fb:hover,.fb.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+
+    /* SECTION */
+    .shdr{display:flex;align-items:center;gap:14px;padding:0 clamp(14px,4vw,52px);max-width:1500px;margin:0 auto 22px}
+    .stit{font-size:.57rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+    .sline{flex:1;height:1px;background:linear-gradient(to right,var(--border),transparent)}
+    .scnt{font-size:.57rem;color:var(--ink3);letter-spacing:.1em}
+
+    /* GRID */
+    .gw{position:relative;z-index:1;padding:0 clamp(14px,4vw,52px) 90px;max-width:1500px;margin:0 auto}
+    .cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,335px),1fr));gap:14px}
+
+    /* CARD */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:transform var(--tr),box-shadow var(--tr),border-color var(--tr);animation:fu .3s ease both;position:relative}
+    @keyframes fu{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+    .card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--border2)}
+    .card.fv{border-color:var(--gold)}
+    .card.fv::before{content:'';position:absolute;inset:0;border-radius:var(--radius);background:linear-gradient(135deg,rgba(200,164,74,.07) 0%,transparent 55%);pointer-events:none}
+    .ch{display:flex;align-items:center;justify-content:space-between;padding:11px 14px 8px;border-bottom:1px solid var(--border)}
+    .cn{font-size:.61rem;letter-spacing:.2em;color:var(--ink3);text-transform:uppercase}
+    .bdg{font-size:.51rem;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--surface2);border:1px solid var(--border);color:var(--ink3)}
+    .bdg.u{border-color:rgba(200,164,74,.3);color:var(--gold)}
+    .cp{flex:1;padding:clamp(13px,2vw,24px) 17px;min-height:84px;display:flex;align-items:center;justify-content:center;word-break:break-word;text-align:center;line-height:1.35;color:var(--ink);transition:font-size var(--tr)}
+    .cp.ph{color:var(--ink3);font-style:italic;font-size:1rem !important;font-family:'Cormorant Garamond',serif !important}
+    .cf{display:flex;align-items:center;gap:6px;padding:8px 11px 10px;border-top:1px solid var(--border)}
+    .bcp{flex:1;font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;padding:9px 13px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--surface2);color:var(--ink2);cursor:pointer;transition:all var(--tr);display:flex;align-items:center;justify-content:center;gap:5px}
+    .bcp:hover{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+    .bcp.ok{background:var(--green);border-color:var(--green);color:#fff}
+    .bi{width:31px;height:31px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--surface2);color:var(--ink3);cursor:pointer;transition:all var(--tr);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.88rem}
+    .bi:hover{background:var(--border2);color:var(--ink)}
+    .bi.fon{color:var(--gold2);border-color:var(--gold);background:rgba(200,164,74,.1)}
+
+    /* FULLSCREEN */
+    #fso{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.94);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .26s ease}
+    #fso.op{display:flex}
+    #fso.vs{opacity:1}
+    .fs-orb{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(200,164,74,.07) 0%,transparent 68%);pointer-events:none;left:50%;top:50%;transform:translate(-50%,-50%)}
+    .fsc{position:relative;background:var(--surface);border:1px solid var(--border2);border-radius:24px;width:100%;max-width:920px;max-height:90vh;overflow:hidden;box-shadow:0 28px 90px rgba(0,0,0,.75);display:flex;flex-direction:column}
+    .fst{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--border);flex-shrink:0}
+    .fsn{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold)}
+    .fsbdg{font-size:.52rem;letter-spacing:.1em;padding:3px 10px;border-radius:999px;background:var(--surface2);border:1px solid var(--border2);color:var(--ink3);text-transform:uppercase}
+    .fsbdg.u{border-color:rgba(200,164,74,.3);color:var(--gold)}
+    .fsclx{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);color:var(--ink3);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all var(--tr)}
+    .fsclx:hover{background:var(--red);border-color:var(--red);color:#fff}
+    .fsstg{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(30px,6vw,80px) clamp(22px,5vw,64px);overflow:auto;min-height:200px;position:relative}
+    .fsstg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 50%,rgba(200,164,74,.04) 0%,transparent 80%);pointer-events:none}
+    #fsTxt{word-break:break-word;text-align:center;line-height:1.3;color:var(--ink);position:relative;z-index:1;transition:font-size var(--tr)}
+    #fsTxt.ph{color:var(--ink3);font-style:italic;font-size:1.4rem !important;font-family:'Cormorant Garamond',serif !important}
+    .fsfoot{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:13px 20px;border-top:1px solid var(--border);flex-shrink:0}
+    .fssw{display:flex;align-items:center;gap:8px;flex:1;min-width:160px}
+    .fssl{font-size:.58rem;letter-spacing:.14em;color:var(--ink3);white-space:nowrap}
+    .fssv{font-size:.58rem;color:var(--gold);letter-spacing:.06em;min-width:28px}
+    #fsSz{-webkit-appearance:none;appearance:none;flex:1;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
+    #fsSz::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold);cursor:pointer}
+    .fsbtn{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;padding:9px 18px;border-radius:var(--rsm);cursor:pointer;transition:all var(--tr);display:flex;align-items:center;gap:5px}
+    .fsbtn.outline{border:1px solid var(--gold);background:transparent;color:var(--gold)}
+    .fsbtn.outline:hover,.fsbtn.outline.ok{background:var(--gold);color:var(--bg)}
+    .fsbtn.ghost{border:1px solid var(--border2);background:var(--surface2);color:var(--ink3)}
+    .fsbtn.ghost:hover{background:var(--border2);color:var(--ink)}
+
+    /* BG THEME SELECTOR IN FS */
+    .fsbgs{display:flex;gap:5px;flex-shrink:0}
+    .fsbg-dot{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color var(--tr);flex-shrink:0}
+    .fsbg-dot.act{border-color:var(--gold)}
+
+    /* EMPTY */
+    .empty{grid-column:1/-1;text-align:center;padding:58px 24px;display:none}
+    .empty.vs{display:block}
+    .empty-i{font-size:2.2rem;opacity:.32;margin-bottom:14px}
+    .empty-t{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--ink3);font-style:italic}
+
+    /* TOAST */
+    #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--surface2);border:1px solid var(--border2);border-radius:var(--rsm);padding:10px 22px;font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.14em;color:var(--ink2);opacity:0;transition:opacity .22s ease,transform .22s ease;z-index:9999;pointer-events:none;white-space:nowrap}
+    #toast.sh{opacity:1;transform:translateX(-50%) translateY(0)}
+    .orn{text-align:center;padding:4px 0 44px;color:var(--gold);opacity:.22;font-size:1rem;letter-spacing:.65em}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-track{background:var(--bg2,var(--bg))}
+    ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+    canvas{display:none}
+    @media(max-width:560px){.szw{display:none}.fbrow{gap:4px}.fb{font-size:.52rem;padding:6px 9px}.fsfoot{gap:6px}}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr">
+    <a class="logo" href="#">
+      <span class="logo-q">Qreative</span>
+      <span class="logo-rest">Calligraphy</span>
+      <span class="logo-dot">·</span>
+      <span class="logo-sub">Text Studio</span>
+    </a>
+    <div class="hdr-r">
+      <span class="hdr-ico">☀︎</span>
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme"></button>
+      <span class="hdr-ico">☽</span>
+    </div>
+  </div>
+</header>
+
+<!-- HERO INPUT -->
+<div class="hero">
+  <div class="eyebrow">Compose your text</div>
+  <div class="ishell">
+    <span class="inib">✦</span>
+    <input type="text" id="tIn" placeholder="Write something beautiful…" maxlength="120" autocomplete="off" spellcheck="false" />
+    <span id="cCount">0 / 120</span>
+    <button id="clrBtn" title="Clear">✕</button>
+  </div>
+  <div class="ctrls">
+    <div class="sw">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="sIn" placeholder="Search styles…" />
+    </div>
+    <div class="szw">
+      <span class="szl">Size</span>
+      <input type="range" id="szR" min="12" max="58" value="26" />
+      <span class="szv" id="szV">26</span>
+    </div>
+    <div class="fbrow">
+      <button class="fb on" data-f="all">All</button>
+      <button class="fb" data-f="font">Fonts</button>
+      <button class="fb" data-f="unicode">Unicode</button>
+      <button class="fb" data-f="fav">♥ Saved</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION HEADER -->
+<div class="shdr">
+  <span class="stit">Style Gallery</span>
+  <span class="sline"></span>
+  <span class="scnt" id="cntL">— styles</span>
+</div>
+
+<!-- GRID -->
+<div class="gw">
+  <div class="cg" id="grid"></div>
+</div>
+<div class="orn">✦ ✦ ✦</div>
+
+<!-- FULLSCREEN OVERLAY -->
+<div id="fso" role="dialog" aria-modal="true" aria-label="Fullscreen preview">
+  <div class="fs-orb"></div>
+  <div class="fsc">
+
+    <!-- top bar -->
+    <div class="fst">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="fsn" id="fsN">—</span>
+        <span class="fsbdg" id="fsBdg">—</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <!-- bg swatches -->
+        <div class="fsbgs" id="fsBgs"></div>
+        <button class="fsclx" id="fsX" title="Close (Esc)">✕</button>
+      </div>
+    </div>
+
+    <!-- stage -->
+    <div class="fsstg" id="fsStg">
+      <div id="fsTxt"></div>
+    </div>
+
+    <!-- footer controls -->
+    <div class="fsfoot">
+      <div class="fssw">
+        <span class="fssl">Size</span>
+        <input type="range" id="fsSz" min="16" max="130" value="64" />
+        <span class="fssv" id="fsSzV">64</span>
+      </div>
+      <button class="fsbtn ghost" id="fsDl">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </button>
+      <button class="fsbtn outline" id="fsCp">Copy</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+<canvas id="cv"></canvas>
+
+<script>
+/* ==========================================================
+   QREATIVE CALLIGRAPHY TEXT STUDIO — Full Script
+   ========================================================== */
+
+/* ── UNICODE FNS ──────────────────────────── */
+const U={
+  bold:s=>[...s].map(c=>{const n=c.codePointAt(0);if(n>=65&&n<=90)return String.fromCodePoint(n-65+0x1D400);if(n>=97&&n<=122)return String.fromCodePoint(n-97+0x1D41A);if(n>=48&&n<=57)return String.fromCodePoint(n-48+0x1D7CE);return c}).join(''),
+  italic:s=>[...s].map(c=>{const n=c.codePointAt(0);if(n>=65&&n<=90)return String.fromCodePoint(n-65+0x1D434);if(n>=97&&n<=122)return n===104?'ℎ':String.fromCodePoint(n-97+0x1D44E);return c}).join(''),
+  boldItalic:s=>[...s].map(c=>{const n=c.codePointAt(0);if(n>=65&&n<=90)return String.fromCodePoint(n-65+0x1D468);if(n>=97&&n<=122)return String.fromCodePoint(n-97+0x1D482);return c}).join(''),
+  script:s=>[...s].map(c=>{const n=c.codePointAt(0);const m={65:0x1D49C,66:0x212C,67:0x1D49E,68:0x1D49F,69:0x2130,70:0x2131,71:0x1D4A2,72:0x210B,73:0x2110,74:0x1D4A5,75:0x1D4A6,76:0x2112,77:0x2133,78:0x1D4A9,79:0x1D4AA,80:0x1D4AB,81:0x1D4AC,82:0x211B,83:0x1D4AE,84:0x1D4AF,85:0x1D4B0,86:0x1D4B1,87:0x1D4B2,88:0x1D4B3,89:0x1D4B4,90:0x1D4B5};if(m[n])return String.fromCodePoint(m[n]);if(n>=97&&n<=122)return String.fromCodePoint(n-97+0x1D4B6);return c}).join(''),
+  boldScript:s=>[...s].map(c=>{const n=c.codePointAt(0);if(n>=65&&n<=90)return String.fromCodePoint(n-65+0x1D4D0);if(n>=97&&n<=122)return String.fromCodePoint(n-97+0x1D4EA);return c}).join(''),
+  fraktur:s=>[...s].map(c=>{const n=c.codePointAt(0);const m={67:0x212D,72:0x210C,73:0x2111,82:0x211C,90:0x2128};if(m[n])return String.fromCodePoint(m[n]);if(n>=65&&n<=90)return String.fromCodePoint(n-65+0x1D504);if(n>=97&&n<=122)return String.fromCodePoint(n-97+0x1D51E);return c}).join(''),
+  boldFraktur:s=>[...s].map(c=>{const n=c.codePointAt(0);if(n>=65&&n<=90)return String.fromCodePoint(n-65+0x1D56C);if(n>=97&&n<=122)return String.fromCodePoint(n-97+0x1D586);return c}).join(''),
+  double:s=>[...s].map(c=>{const n=c.codePointAt(0);const m={67:0x2102,72:0x210D,78:0x2115,80:0x2119,81:0x211A,82:0x211D,90:0x2124};if(m[n])return String.fromCodePoint(m[n]);if(n>=65&&n<=90)return String.fromCodePoint(n-65+0x1D538);if(n>=97&&n<=122)return String.fromCodePoint(n-97+0x1D552);if(n>=48&&n<=57)return String.fromCodePoint(n-48+0x1D7D8);return c}).join(''),
+  mono:s=>[...s].map(c=>{const n=c.codePointAt(0);if(n>=65&&n<=90)return String.fromCodePoint(n-65+0x1D670);if(n>=97&&n<=122)return String.fromCodePoint(n-97+0x1D68A);if(n>=48&&n<=57)return String.fromCodePoint(n-48+0x1D7F6);return c}).join(''),
+  bubble:s=>[...s].map(c=>{const n=c.codePointAt(0);if(n>=65&&n<=90)return String.fromCodePoint(n-65+0x24B6);if(n>=97&&n<=122)return String.fromCodePoint(n-97+0x24D0);if(n>=49&&n<=57)return String.fromCodePoint(n-49+0x2460);if(n===48)return'⓪';return c}).join(''),
+  squareBubble:s=>[...s].map(c=>{const n=c.codePointAt(0);if(n>=65&&n<=90)return String.fromCodePoint(n-65+0x1F130);if(n>=97&&n<=122)return String.fromCodePoint(n-97+0x1F130+32);return c}).join(''),
+  smallCaps:s=>{const m={a:'ᴀ',b:'ʙ',c:'ᴄ',d:'ᴅ',e:'ᴇ',f:'ꜰ',g:'ɢ',h:'ʜ',i:'ɪ',j:'ᴊ',k:'ᴋ',l:'ʟ',m:'ᴍ',n:'ɴ',o:'ᴏ',p:'ᴘ',q:'ǫ',r:'ʀ',s:'ꜱ',t:'ᴛ',u:'ᴜ',v:'ᴠ',w:'ᴡ',x:'x',y:'ʏ',z:'ᴢ'};return[...s.toLowerCase()].map(c=>m[c]||c).join('')},
+  super:s=>{const m={a:'ᵃ',b:'ᵇ',c:'ᶜ',d:'ᵈ',e:'ᵉ',f:'ᶠ',g:'ᵍ',h:'ʰ',i:'ⁱ',j:'ʲ',k:'ᵏ',l:'ˡ',m:'ᵐ',n:'ⁿ',o:'ᵒ',p:'ᵖ',r:'ʳ',s:'ˢ',t:'ᵗ',u:'ᵘ',v:'ᵛ',w:'ʷ',x:'ˣ',y:'ʸ',z:'ᶻ','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};return[...s].map(c=>m[c]||c).join('')},
+  sub:s=>{const m={a:'ₐ',e:'ₑ',o:'ₒ',x:'ₓ',h:'ₕ',k:'ₖ',l:'ₗ',m:'ₘ',n:'ₙ',p:'ₚ',s:'ₛ',t:'ₜ','0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};return[...s].map(c=>m[c]||c).join('')},
+  wide:s=>[...s].map(c=>{const n=c.codePointAt(0);if(n>=33&&n<=126)return String.fromCodePoint(n-33+0xFF01);return c===' '?'　':c}).join(''),
+  strike:s=>[...s].map(c=>c===' '?' ':c+'̶').join(''),
+  under:s=>[...s].map(c=>c===' '?' ':c+'̲').join(''),
+  over:s=>[...s].map(c=>c===' '?' ':c+'̄').join(''),
+  slash:s=>[...s].map(c=>c===' '?' ':c+'̸').join(''),
+  wavy:s=>[...s].map(c=>c===' '?' ':c+'͝').join(''),
+  diaeresis:s=>[...s].map(c=>c===' '?' ':c+'̈').join(''),
+  flip:s=>{const m={a:'ɐ',b:'q',c:'ɔ',d:'p',e:'ǝ',f:'ɟ',g:'ƃ',h:'ɥ',i:'ᴉ',j:'ɾ',k:'ʞ',l:'l',m:'ɯ',n:'u',o:'o',p:'d',q:'b',r:'ɹ',s:'s',t:'ʇ',u:'n',v:'ʌ',w:'ʍ',x:'x',y:'ʎ',z:'z','!':'¡','?':'¿'};return[...s].map(c=>m[c.toLowerCase()]||c).reverse().join('')},
+  morse:s=>{const m={a:'.-',b:'-...',c:'-.-.',d:'-..',e:'.',f:'..-.',g:'--.',h:'....',i:'..',j:'.---',k:'-.-',l:'.-..',m:'--',n:'-.',o:'---',p:'.--.',q:'--.-',r:'.-.',s:'...',t:'-',u:'..-',v:'...-',w:'.--',x:'-..-',y:'-.--',z:'--..',0:'-----',1:'.----',2:'..---',3:'...--',4:'....-',5:'.....',6:'-....',7:'--...',8:'---..',9:'----.'};return s.toLowerCase().split('').map(c=>c===' '?'/':m[c]||c).join(' ')},
+  braille:s=>{const m={a:'⠁',b:'⠃',c:'⠉',d:'⠙',e:'⠑',f:'⠋',g:'⠛',h:'⠓',i:'⠊',j:'⠚',k:'⠅',l:'⠇',m:'⠍',n:'⠝',o:'⠕',p:'⠏',q:'⠟',r:'⠗',s:'⠎',t:'⠞',u:'⠥',v:'⠧',w:'⠺',x:'⠭',y:'⠽',z:'⠵',' ':'⠀'};return[...s.toLowerCase()].map(c=>m[c]||c).join('')},
+};
+
+/* ── FONTS (29 Google) ────────────────────── */
+const FONTS=[
+  {id:'great-vibes',      name:'Great Vibes',         fam:'"Great Vibes",cursive',          type:'font'},
+  {id:'dancing-script',   name:'Dancing Script',       fam:'"Dancing Script",cursive',       type:'font'},
+  {id:'allura',           name:'Allura',               fam:'"Allura",cursive',               type:'font'},
+  {id:'sacramento',       name:'Sacramento',           fam:'"Sacramento",cursive',           type:'font'},
+  {id:'satisfy',          name:'Satisfy',              fam:'"Satisfy",cursive',              type:'font'},
+  {id:'parisienne',       name:'Parisienne',           fam:'"Parisienne",cursive',           type:'font'},
+  {id:'alex-brush',       name:'Alex Brush',           fam:'"Alex Brush",cursive',           type:'font'},
+  {id:'courgette',        name:'Courgette',            fam:'"Courgette",cursive',            type:'font'},
+  {id:'kaushan-script',   name:'Kaushan Script',       fam:'"Kaushan Script",cursive',       type:'font'},
+  {id:'pacifico',         name:'Pacifico',             fam:'"Pacifico",cursive',             type:'font'},
+  {id:'pinyon-script',    name:'Pinyon Script',        fam:'"Pinyon Script",cursive',        type:'font'},
+  {id:'ms-madi',          name:'Ms Madi',              fam:'"Ms Madi",cursive',              type:'font'},
+  {id:'lavishly-yours',   name:'Lavishly Yours',       fam:'"Lavishly Yours",cursive',       type:'font'},
+  {id:'engagement',       name:'Engagement',           fam:'"Engagement",cursive',           type:'font'},
+  {id:'herr-von',         name:'Herr Von Muellerhoff', fam:'"Herr Von Muellerhoff",cursive', type:'font'},
+  {id:'mr-de-havilland',  name:'Mr De Havilland',      fam:'"Mr De Havilland",cursive',      type:'font'},
+  {id:'italianno',        name:'Italianno',            fam:'"Italianno",cursive',            type:'font'},
+  {id:'qwitcher',         name:'Qwitcher Grypen',      fam:'"Qwitcher Grypen",cursive',      type:'font'},
+  {id:'monsieur-la',      name:'Monsieur La Doulaise', fam:'"Monsieur La Doulaise",cursive', type:'font'},
+  {id:'style-script',     name:'Style Script',         fam:'"Style Script",cursive',         type:'font'},
+  {id:'waterfall',        name:'Waterfall',            fam:'"Waterfall",cursive',            type:'font'},
+  {id:'clicker-script',   name:'Clicker Script',       fam:'"Clicker Script",cursive',       type:'font'},
+  {id:'lovers-quarrel',   name:'Lovers Quarrel',       fam:'"Lovers Quarrel",cursive',       type:'font'},
+  {id:'euphoria-script',  name:'Euphoria Script',      fam:'"Euphoria Script",cursive',      type:'font'},
+  {id:'imperial-script',  name:'Imperial Script',      fam:'"Imperial Script",cursive',      type:'font'},
+  {id:'meie-script',      name:'Meie Script',          fam:'"Meie Script",cursive',          type:'font'},
+  {id:'stalemate',        name:'Stalemate',            fam:'"Stalemate",cursive',            type:'font'},
+  {id:'corinthia',        name:'Corinthia',            fam:'"Corinthia",cursive',            type:'font'},
+  {id:'ruthie',           name:'Ruthie',               fam:'"Ruthie",cursive',               type:'font'},
+];
+
+/* ── UNICODE STYLES (23) ──────────────────── */
+const UNIS=[
+  {id:'u-bold',        name:'Bold',           fn:U.bold,         type:'unicode'},
+  {id:'u-italic',      name:'Italic',         fn:U.italic,       type:'unicode'},
+  {id:'u-bitalic',     name:'Bold Italic',    fn:U.boldItalic,   type:'unicode'},
+  {id:'u-script',      name:'Script',         fn:U.script,       type:'unicode'},
+  {id:'u-bscript',     name:'Bold Script',    fn:U.boldScript,   type:'unicode'},
+  {id:'u-fraktur',     name:'Fraktur',        fn:U.fraktur,      type:'unicode'},
+  {id:'u-bfraktur',    name:'Bold Fraktur',   fn:U.boldFraktur,  type:'unicode'},
+  {id:'u-double',      name:'Double Struck',  fn:U.double,       type:'unicode'},
+  {id:'u-mono',        name:'Monospace',      fn:U.mono,         type:'unicode'},
+  {id:'u-bubble',      name:'Bubble',         fn:U.bubble,       type:'unicode'},
+  {id:'u-sqbubble',    name:'Square Bubble',  fn:U.squareBubble, type:'unicode'},
+  {id:'u-scaps',       name:'Small Caps',     fn:U.smallCaps,    type:'unicode'},
+  {id:'u-super',       name:'Superscript',    fn:U.super,        type:'unicode'},
+  {id:'u-sub',         name:'Subscript',      fn:U.sub,          type:'unicode'},
+  {id:'u-wide',        name:'Full Width',     fn:U.wide,         type:'unicode'},
+  {id:'u-strike',      name:'Strikethrough',  fn:U.strike,       type:'unicode'},
+  {id:'u-under',       name:'Underline',      fn:U.under,        type:'unicode'},
+  {id:'u-over',        name:'Overline',       fn:U.over,         type:'unicode'},
+  {id:'u-slash',       name:'Slashed',        fn:U.slash,        type:'unicode'},
+  {id:'u-wavy',        name:'Wavy',           fn:U.wavy,         type:'unicode'},
+  {id:'u-diaer',       name:'Diaeresis',      fn:U.diaeresis,    type:'unicode'},
+  {id:'u-flip',        name:'Upside Down',    fn:U.flip,         type:'unicode'},
+  {id:'u-morse',       name:'Morse Code',     fn:U.morse,        type:'unicode'},
+  {id:'u-braille',     name:'Braille',        fn:U.braille,      type:'unicode'},
+];
+
+const ALL=[...FONTS,...UNIS];
+
+/* ── FULLSCREEN BG THEMES ─────────────────── */
+const FSBGS=[
+  {id:'b-dark',  label:'Dark',  bg:'#0b0908', color:'#eee5d2'},
+  {id:'b-parch', label:'Parchment', bg:'#f4ede0', color:'#281e12'},
+  {id:'b-night', label:'Midnight',  bg:'#0d0e1a', color:'#dde2ff'},
+  {id:'b-sage',  label:'Sage',      bg:'#0d1a10', color:'#d2eeda'},
+  {id:'b-rose',  label:'Rose',      bg:'#1a0d10', color:'#f0d2da'},
+];
+let fsBgIdx=0;
+
+/* ── STATE ────────────────────────────────── */
+let txt='',sz=26,filt='all',q='',favs=JSON.parse(localStorage.getItem('qc_f')||'[]');
+let fsStyle=null,fsSz=64;
+
+/* ── DOM ──────────────────────────────────── */
+const $=id=>document.getElementById(id);
+const tIn=$('tIn'),sIn=$('sIn'),szR=$('szR'),szV=$('szV'),clrBtn=$('clrBtn'),
+      grid=$('grid'),cntL=$('cntL'),themeBtn=$('themeBtn'),
+      fso=$('fso'),fsN=$('fsN'),fsBdg=$('fsBdg'),fsTxt=$('fsTxt'),
+      fsX=$('fsX'),fsSz=$('fsSz'),fsSzV=$('fsSzV'),fsCp=$('fsCp'),fsDl=$('fsDl'),
+      fsStg=$('fsStg'),fsBgs=$('fsBgs'),toast=$('toast'),cv=$('cv');
+
+/* ── BUILD BG SWATCHES ────────────────────── */
+FSBGS.forEach((bg,i)=>{
+  const d=document.createElement('button');
+  d.className='fsbg-dot'+(i===0?' act':'');
+  d.title=bg.label;
+  d.style.background=bg.bg;
+  d.style.border='2px solid '+(i===0?'#c8a44a':'transparent');
+  d.addEventListener('click',()=>{
+    fsBgIdx=i;
+    document.querySelectorAll('.fsbg-dot').forEach((x,j)=>{
+      x.style.border='2px solid '+(j===i?'#c8a44a':'transparent');
+      x.classList.toggle('act',j===i);
+    });
+    applyFsBg();
+  });
+  fsBgs.appendChild(d);
+});
+function applyFsBg(){
+  const b=FSBGS[fsBgIdx];
+  fsStg.style.background=b.bg;
+  fsTxt.style.color=b.color;
+}
+
+/* ── THEME ────────────────────────────────── */
+document.documentElement.setAttribute('data-theme',localStorage.getItem('qc_t')||'dark');
+themeBtn.addEventListener('click',()=>{
+  const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('qc_t',t);
+});
+
+/* ── TOAST ────────────────────────────────── */
+let tT;
+function showToast(m){clearTimeout(tT);toast.textContent=m;toast.classList.add('sh');tT=setTimeout(()=>toast.classList.remove('sh'),2000)}
+
+/* ── COPY ─────────────────────────────────── */
+async function doCopy(t,btn,reset='Copy'){
+  try{await navigator.clipboard.writeText(t)}
+  catch{const e=document.createElement('textarea');e.value=t;e.style.cssText='position:fixed;top:-9999px';document.body.appendChild(e);e.select();document.execCommand('copy');document.body.removeChild(e)}
+  btn.textContent='✓ Copied';btn.classList.add('ok');
+  showToast('Copied to clipboard ✓');
+  setTimeout(()=>{btn.textContent=reset;btn.classList.remove('ok')},1800);
+}
+
+/* ── DOWNLOAD IMAGE ───────────────────────── */
+function dlImg(style,t,customSz,bgOverride){
+  const isDark=bgOverride?false:document.documentElement.getAttribute('data-theme')==='dark';
+  const bg=bgOverride||FSBGS[fsBgIdx].bg;
+  const fg=bgOverride?'#eee5d2':FSBGS[fsBgIdx].color||'#eee5d2';
+  const W=900,H=360,ctx=cv.getContext('2d');
+  cv.width=W;cv.height=H;
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(200,164,74,0.3)';ctx.lineWidth=1;ctx.strokeRect(14,14,W-28,H-28);
+  ctx.strokeStyle='#c8a44a';ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(44,H-48);ctx.lineTo(W-44,H-48);ctx.stroke();
+  ctx.fillStyle='#c8a44a';
+  ctx.font='500 10px serif';ctx.textAlign='center';
+  ctx.fillText(style.name.toUpperCase(),W/2,H-26);
+  const display=style.type==='unicode'?style.fn(t):t;
+  const ff=style.type==='font'?style.fam:'Georgia,serif';
+  ctx.fillStyle=fg;ctx.textAlign='center';ctx.textBaseline='middle';
+  let fs=customSz||72;
+  ctx.font=`${fs}px ${ff}`;
+  while(ctx.measureText(display).width>W-80&&fs>16){fs-=2;ctx.font=`${fs}px ${ff}`}
+  ctx.fillText(display,W/2,H/2-10);
+  const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download=`qreative-${style.id}.png`;a.click();
+  showToast('Image downloaded ✓');
+}
+
+/* ── FAVORITES ────────────────────────────── */
+function toggleFav(id,btn,card){
+  if(favs.includes(id)){favs=favs.filter(f=>f!==id);btn.classList.remove('fon');card.classList.remove('fv')}
+  else{favs.push(id);btn.classList.add('fon');card.classList.add('fv');showToast('Saved ♥')}
+  localStorage.setItem('qc_f',JSON.stringify(favs));
+  if(filt==='fav')renderCards();
+}
+
+/* ── FULLSCREEN ───────────────────────────── */
+function openFS(style){
+  fsStyle=style;
+  fsN.textContent=style.name;
+  fsBdg.textContent=style.type==='font'?'Google Font':'Unicode';
+  fsBdg.className='fsbdg'+(style.type==='unicode'?' u':'');
+  fsSz.value=fsSzV.textContent=fsSz.value;
+  updateFsPreview();
+  fso.classList.add('op');
+  requestAnimationFrame(()=>fso.classList.add('vs'));
+  document.body.style.overflow='hidden';
+}
+function closeFS(){
+  fso.classList.remove('vs');
+  setTimeout(()=>{fso.classList.remove('op');document.body.style.overflow=''},260);
+  fsStyle=null;
+}
+function updateFsPreview(){
+  if(!fsStyle)return;
+  const display=!txt?'':fsStyle.type==='unicode'?fsStyle.fn(txt):txt;
+  fsTxt.className=!display?'ph':'';
+  fsTxt.style.fontSize=fsSzV.textContent+'px';
+  fsTxt.style.fontFamily=fsStyle.type==='font'?fsStyle.fam:'Georgia,serif';
+  fsTxt.textContent=display||'Type text to see it here…';
+  applyFsBg();
+}
+fsX.addEventListener('click',closeFS);
+fso.addEventListener('click',e=>{if(e.target===fso)closeFS()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&fsStyle)closeFS()});
+fsSz.addEventListener('input',()=>{fsSzV.textContent=fsSz.value;if(fsTxt)fsTxt.style.fontSize=fsSz.value+'px'});
+fsCp.addEventListener('click',()=>{
+  if(!txt){showToast('Please type some text first');return}
+  doCopy(fsStyle.type==='unicode'?fsStyle.fn(txt):txt,fsCp,'Copy');
+});
+fsDl.addEventListener('click',()=>{
+  if(!txt){showToast('Please type some text first');return}
+  dlImg(fsStyle,txt,parseInt(fsSz.value));
+});
+
+/* ── DISPLAY TEXT ─────────────────────────── */
+function getDisp(style){
+  if(!txt)return'';
+  return style.type==='unicode'?style.fn(txt):txt;
+}
+
+/* ── BUILD CARD ───────────────────────────── */
+function buildCard(style,idx){
+  const card=document.createElement('div');
+  card.className='card'+(favs.includes(style.id)?' fv':'');
+  card.dataset.id=style.id;
+
+  const disp=getDisp(style),has=disp.trim()!=='';
+
+  const ch=document.createElement('div');ch.className='ch';
+  ch.innerHTML=`<span class="cn">${style.name}</span><span class="bdg ${style.type==='unicode'?'u':''}">${style.type==='font'?'Google Font':'Unicode'}</span>`;
+
+  const cp=document.createElement('div');
+  cp.className='cp'+(has?'':' ph');
+  cp.style.fontSize=sz+'px';
+  cp.style.fontFamily=style.type==='font'?style.fam:'Georgia,serif';
+  cp.textContent=has?disp:'Type to preview…';
+
+  const cf=document.createElement('div');cf.className='cf';
+
+  const bcp=document.createElement('button');bcp.className='bcp';bcp.textContent='Copy';
+
+  const bfs=document.createElement('button');bfs.className='bi';bfs.title='Fullscreen';
+  bfs.innerHTML=`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>`;
+
+  const bdl=document.createElement('button');bdl.className='bi';bdl.title='Download image';
+  bdl.innerHTML=`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+
+  const bfv=document.createElement('button');
+  bfv.className='bi'+(favs.includes(style.id)?' fon':'');
+  bfv.title='Save to favorites';bfv.textContent='♥';
+
+  bcp.addEventListener('click',()=>{
+    if(!txt){showToast('Please type some text first');return}
+    doCopy(getDisp(style),bcp,'Copy');
+  });
+  bfs.addEventListener('click',()=>openFS(style));
+  bdl.addEventListener('click',()=>{
+    if(!txt){showToast('Please type some text first');return}
+    dlImg(style,txt,sz);
+  });
+  bfv.addEventListener('click',()=>toggleFav(style.id,bfv,card));
+
+  cf.append(bcp,bfs,bdl,bfv);
+  card.append(ch,cp,cf);
+  card.style.animationDelay=Math.min(idx*0.032,0.5)+'s';
+  return card;
+}
+
+/* ── VISIBLE STYLES ───────────────────────── */
+function visible(){
+  let s=ALL;
+  if(filt==='font')s=s.filter(x=>x.type==='font');
+  if(filt==='unicode')s=s.filter(x=>x.type==='unicode');
+  if(filt==='fav')s=s.filter(x=>favs.includes(x.id));
+  if(q)s=s.filter(x=>x.name.toLowerCase().includes(q));
+  return s;
+}
+
+/* ── RENDER CARDS ─────────────────────────── */
+function renderCards(){
+  const styles=visible();
+  cntL.textContent=`${styles.length} style${styles.length!==1?'s':''}`;
+  const ids=styles.map(s=>s.id);
+  [...grid.querySelectorAll('.card')].forEach(c=>{if(!ids.includes(c.dataset.id))c.remove()});
+  styles.forEach((s,i)=>{
+    const ex=grid.querySelector(`[data-id="${s.id}"]`);
+    if(ex)updPrev(ex,s);
+    else{const c=buildCard(s,i);grid.appendChild(c)}
+  });
+  let em=grid.querySelector('.empty');
+  if(!em){em=document.createElement('div');em.className='empty';em.innerHTML='<div class="empty-i">✦</div><div class="empty-t">No styles match your search</div>';grid.appendChild(em)}
+  em.classList.toggle('vs',styles.length===0);
+}
+
+function updPrev(card,style){
+  const cp=card.querySelector('.cp');
+  const disp=getDisp(style),has=disp.trim()!=='';
+  cp.className='cp'+(has?'':' ph');
+  cp.style.fontSize=sz+'px';
+  cp.style.fontFamily=style.type==='font'?style.fam:'Georgia,serif';
+  cp.textContent=has?disp:'Type to preview…';
+}
+
+function updAll(){
+  visible().forEach(s=>{const c=grid.querySelector(`[data-id="${s.id}"]`);if(c)updPrev(c,s)});
+  updateFsPreview();
+}
+
+/* ── EVENTS ───────────────────────────────── */
+tIn.addEventListener('input',()=>{
+  txt=tIn.value;
+  $('cCount').textContent=`${txt.length} / 120`;
+  clrBtn.classList.toggle('vis',txt.length>0);
+  updAll();
+});
+clrBtn.addEventListener('click',()=>{
+  tIn.value='';txt='';$('cCount').textContent='0 / 120';
+  clrBtn.classList.remove('vis');updAll();tIn.focus();
+});
+sIn.addEventListener('input',()=>{q=sIn.value.toLowerCase().trim();renderCards()});
+szR.addEventListener('input',()=>{
+  sz=parseInt(szR.value);szV.textContent=sz;
+  document.querySelectorAll('.cp:not(.ph)').forEach(p=>p.style.fontSize=sz+'px');
+});
+document.querySelectorAll('.fb').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');filt=btn.dataset.f;renderCards();
+  });
+});
+
+/* ── INIT ─────────────────────────────────── */
+renderCards();
+tIn.focus();
+</script>
+</body>
+</html>
